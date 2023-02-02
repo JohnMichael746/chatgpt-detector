@@ -7,7 +7,7 @@ const { TextArea } = Input;
 
 function App() {
   const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: "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",
   });
   const openai = new OpenAIApi(configuration);
 
@@ -17,7 +17,7 @@ function App() {
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(null);
   const [answer, setAnswer] = useState("");
-  const [prefix, setPrefix] = useState('Print only without "%" how many percentage you can evaluate to write this yourself?: "')
+  const [prefix, setPrefix] = useState('On the scale of 1-100 how many number can you evaluate to write this yourself?: "')
   const [suffix, setSuffix] = useState('"')
 
   const onCheck = async () => {
@@ -28,8 +28,6 @@ function App() {
 
       setIsLoading(true);
 
-      console.log(`${message}`);
-
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: `${message}`,
@@ -37,14 +35,13 @@ function App() {
         temperature: 0.6,
       });
 
-      setPercent(`${response.data.choices[0].text}`);
+      const p = response.data.choices[0].text
+      setPercent(`${p}`);
       
-      if (percent > 80) {
+      if (!isNaN(parseInt(p)) && parseInt(p) > 80) {
         setAnswer("Yes, I wrote this.");
-        console.log("Yes", percent);
       } else {
         setAnswer("No, I didn't write this.");
-        console.log("no", percent);
       }
 
       setIsLoading(false);
@@ -75,13 +72,15 @@ function App() {
                   ]}
                 >
                   <Input.TextArea 
+                    className='field-input-query'
                     placeholder="" 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    autoSize
                   />
                 </Form.Item>
                 <Text className='field-title'>Have this essay written by OpenAI?</Text>
-                <TextArea placeholder="" value={answer.trimStart()} autoSize readOnly/>
+                <Input placeholder="" value={answer.trimStart()} readOnly/>
                 <div
                   style={{
                     margin: '24px 0',
