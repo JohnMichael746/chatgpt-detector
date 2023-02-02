@@ -12,7 +12,7 @@
 }
 
 .detector-area {
-  width: calc(100% - 195px) !important;
+  width: calc(100% - 300px) !important;
   border-radius: 8px 0 0 8px !important;
 }
 
@@ -21,6 +21,11 @@
   display: flex;
   align-items: center;
   border-radius: 0 8px 8px 0 !important;
+}
+
+.comment-area {
+  width: 300px !important;
+  font-size: 20px;
 }
 
 .field-title {
@@ -36,6 +41,10 @@
 
 .detector-area textarea {
   min-height: 100px;
+}
+
+.field-input-query {
+  min-height: 300px;
 }
 
 .text-align-center {

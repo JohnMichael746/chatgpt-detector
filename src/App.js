@@ -1,13 +1,13 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import { Configuration, OpenAIApi } from 'openai';
-import { Form, Input, Typography, Card, Col, Row, Progress, Button, Space} from 'antd';
+import { Form, Input, Typography, Card, Col, Row, Progress, Button, Space } from 'antd';
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 function App() {
   const configuration = new Configuration({
-    apiKey: "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",
+    apiKey: "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",
   });
   const openai = new OpenAIApi(configuration);
 
@@ -17,13 +17,13 @@ function App() {
   const [percent, setPercent] = useState(0);
   const [isLoading, setIsLoading] = useState(null);
   const [answer, setAnswer] = useState("");
-  const [prefix, setPrefix] = useState('On the scale of 1-100 how many number can you evaluate to write this yourself?: "')
+  const [prefix, setPrefix] = useState('Did you write this?: "')
   const [suffix, setSuffix] = useState('"')
 
   const onCheck = async () => {
     try {
       const values = await form.validateFields();
-      
+
       const message = `${prefix}${input}${suffix}`;
 
       setIsLoading(true);
@@ -36,20 +36,23 @@ function App() {
       });
 
       const p = response.data.choices[0].text
-      setPercent(`${p}`);
-      
-      if (!isNaN(parseInt(p)) && parseInt(p) > 80) {
-        setAnswer("Yes, I wrote this.");
-      } else {
-        setAnswer("No, I didn't write this.");
-      }
+      // setPercent(`${p}`);
+
+      setAnswer(p);
+
+      // if (!isNaN(parseInt(p)) && parseInt(p) > 80) {
+      //   setAnswer("Yes, I wrote this.");
+      // } else {
+      //   setAnswer("No, I didn't write this.");
+      // }
 
       setIsLoading(false);
-      
+
     } catch (errorInfo) {
+      setIsLoading(false);
       console.log('Failed:', errorInfo);
     }
-  };  
+  };
 
   return (
     <>
@@ -57,46 +60,50 @@ function App() {
         form={form}
         name="dynamic_rule"
       ><Row gutter={16}>
-          <Col span={12} offset={4}>
+          <Col span={12} offset={5}>
             <Title className='text-align-center'>ChatGPT Detector</Title>
+            <Text className='field-title'>Our analysis was generated utilizing the OpenAI chatGPT model itself to identify usage</Text>
             <Card>
               <Card.Grid hoverable={false} className="detector-area">
-                <Text className='field-title'>Please input your essay.</Text>
+                <Text className='field-title'>Please input your question.</Text>
                 <Form.Item
                   name="title"
                   rules={[
                     {
                       required: true,
-                      message: 'Please input your essay.',
+                      message: 'Please input your text here.',
                     },
                   ]}
                 >
-                  <Input.TextArea 
+                  <Input.TextArea
                     className='field-input-query'
-                    placeholder="" 
+                    placeholder=""
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     autoSize
                   />
                 </Form.Item>
-                <Text className='field-title'>Have this essay written by OpenAI?</Text>
-                <Input placeholder="" value={answer.trimStart()} readOnly/>
                 <div
                   style={{
                     margin: '24px 0',
                   }}
                 />
-                <div style={{display: 'block', textAlign: 'center'}}>
+                <div style={{ display: 'block', textAlign: 'center' }}>
                   <Button shape="round" size={size} className='action-btn' onClick={onCheck} loading={isLoading === true}>
-                    Analyze
+                    Answer
                   </Button>
                 </div>
               </Card.Grid>
-              <Card.Grid hoverable={false} className="percentage-area">
+              {/* <Card.Grid hoverable={false} className="percentage-area">
                 <Progress type="circle" percent={`${percent}`} format={(percent) => `${percent} %`} strokeWidth={8} width={150} strokeColor={{
                   '0%': '#108ee9',
                   '100%': '#87d068'
                 }}/>
+              </Card.Grid> */}
+              <Card.Grid hoverable={false} className="comment-area">
+                <Text className='field-title'>Has your text been written by OpenAI:</Text>
+                <TextArea 
+                    className='field-input-query' placeholder="" value={answer.trimStart()} autoSize />
               </Card.Grid>
             </Card>
           </Col>
